@@ -501,9 +501,24 @@ class Ticker(_YahooFinance):
             ]
         else:
             prefixed_types = ["{}{}".format(prefix, t) for t in types]
-        data = self._get_data(
-            key, {"type": ",".join(prefixed_types)}, **{"list_result": True}
-        )
+
+        chunked = True
+
+        if chunked:
+            data = {}
+            chunks = [prefixed_types[x:x+20] for x in range(0, len(prefixed_types), 20)] 
+            for chunk in chunks:
+                chunkded_data = self._get_data(
+                    key, {"type": ",".join(chunk)}, **{"list_result": True}
+                )
+                for keychunk in chunkded_data.keys():
+                    if keychunk not in data:
+                        data[keychunk] = []
+                    data[keychunk].extend(chunkded_data[keychunk])
+        else:
+            data = self._get_data(
+                key, {"type": ",".join(prefixed_types)}, **{"list_result": True}
+            )
         dataframes = []
         try:
             for k in data.keys():

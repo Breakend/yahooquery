@@ -55,11 +55,12 @@ class YahooSelenium(object):
             self.driver.switch_to.window(self.driver.window_handles[-1])
             self.driver.find_element_by_id("login-username").send_keys(self.username)
             self.driver.find_element_by_xpath("//input[@id='login-signin']").click()
+            var = input("Please enter your login code: ")
             password_element = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, "login-passwd"))
+                EC.presence_of_element_located((By.ID, "verification-code-field"))
             )
-            password_element.send_keys(self.password)
-            self.driver.find_element_by_xpath("//button[@id='login-signin']").click()
+            password_element.send_keys(var)
+            self.driver.find_element_by_xpath("//button[@id='verify-code-button']").click()
             d = self._get_user_data()
             self.driver.quit()
             return d
